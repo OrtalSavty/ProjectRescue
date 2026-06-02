@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>National Rescue Authority - Dispatch System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🚨 National Rescue Authority</h1>
+                    <p>Emergency Dispatch & Management System</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-box">
+                        <span class="stat-label">Active Responders</span>
+                        <span class="stat-value" id="activeResponders">0</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Active Incidents</span>
+                        <span class="stat-value" id="activeIncidents">0</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Navigation -->
+        <nav class="nav-tabs">
+            <button class="tab-button active" data-tab="dashboard">Dashboard</button>
+            <button class="tab-button" data-tab="responders">Responders</button>
+            <button class="tab-button" data-tab="incidents">Incidents</button>
+            <button class="tab-button" data-tab="system-config">System Config</button>
+        </nav>
+
+        <!-- Content Area -->
+        <main class="main-content">
+            
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="section-header">
+                    <h2>System Dashboard</h2>
+                    <p>Overview of rescue operations</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- System Status -->
+                    <div class="card system-status">
+                        <h3>System Status</h3>
+                        <div class="status-items">
+                            <div class="status-item">
+                                <span class="status-label">Dispatcher Max Hours</span>
+                                <span class="status-value" id="dispatcherMaxHours">40</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Medic Max Hours</span>
+                                <span class="status-value" id="medicMaxHours">45</span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Min Dispatcher Salary</span>
+                                <span class="status-value">₪<span id="minDispatcherSalary">6000</span></span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Min Medic Salary</span>
+                                <span class="status-value">₪<span id="minMedicSalary">7000</span></span>
+                            </div>
+                            <div class="status-item">
+                                <span class="status-label">Drone Hours No Charge</span>
+                                <span class="status-value" id="droneWorkNoCharge">8</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Responder Summary -->
+                    <div class="card responder-summary">
+                        <h3>Responder Summary</h3>
+                        <div class="summary-cards">
+                            <div class="mini-card">
+                                <div class="mini-card-icon">👮</div>
+                                <div class="mini-card-content">
+                                    <div class="mini-card-label">Dispatchers</div>
+                                    <div class="mini-card-value" id="dispatcherCount">0</div>
+                                </div>
+                            </div>
+                            <div class="mini-card">
+                                <div class="mini-card-icon">🏥</div>
+                                <div class="mini-card-content">
+                                    <div class="mini-card-label">Medics</div>
+                                    <div class="mini-card-value" id="medicCount">0</div>
+                                </div>
+                            </div>
+                            <div class="mini-card">
+                                <div class="mini-card-icon">🛸</div>
+                                <div class="mini-card-content">
+                                    <div class="mini-card-label">Drones</div>
+                                    <div class="mini-card-value" id="droneCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activities -->
+                    <div class="card recent-activities" style="grid-column: 1 / -1;">
+                        <h3>Recent Activities</h3>
+                        <div class="activities-list" id="activitiesList">
+                            <p class="empty-message">No activities yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Responders Tab -->
+            <section id="responders" class="tab-content">
+                <div class="section-header">
+                    <h2>Manage Responders</h2>
+                    <button class="btn btn-primary" onclick="showAddResponderForm()">+ Add Responder</button>
+                </div>
+
+                <!-- Add Responder Form -->
+                <div id="addResponderForm" class="card form-card" style="display: none;">
+                    <h3>Add New Responder</h3>
+                    <form onsubmit="addResponder(event)">
+                        <div class="form-group">
+                            <label>Name</label>
+                            <input type="text" id="responderName" required placeholder="Enter name">
+                        </div>
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="number" id="responderId" required placeholder="Enter ID">
+                        </div>
+                        <div class="form-group">
+                            <label>Type</label>
+                            <select id="responderType" required onchange="updateResponderFields()">
+                                <option value="">Select type</option>
+                                <option value="dispatcher">Dispatcher</option>
+                                <option value="medic">Medic</option>
+                                <option value="drone">Drone</option>
+                            </select>
+                        </div>
+                        <div id="typeSpecificFields"></div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Add</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideAddResponderForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Responders List -->
+                <div id="respondersList" class="responders-grid">
+                    <p class="empty-message">No responders yet. Add one to get started.</p>
+                </div>
+            </section>
+
+            <!-- Incidents Tab -->
+            <section id="incidents" class="tab-content">
+                <div class="section-header">
+                    <h2>Manage Incidents</h2>
+                    <button class="btn btn-primary" onclick="showAddIncidentForm()">+ Create Incident</button>
+                </div>
+
+                <!-- Add Incident Form -->
+                <div id="addIncidentForm" class="card form-card" style="display: none;">
+                    <h3>Create New Incident</h3>
+                    <form onsubmit="addIncident(event)">
+                        <div class="form-group">
+                            <label>Type</label>
+                            <input type="text" id="incidentType" required placeholder="e.g., Forest Fire, Car Accident">
+                        </div>
+                        <div class="form-group">
+                            <label>Serial Number</label>
+                            <input type="number" id="incidentSerial" required placeholder="Enter serial number">
+                        </div>
+                        <div class="form-group">
+                            <label>Clearance Level</label>
+                            <select id="incidentClearance" required>
+                                <option value="">Select clearance level</option>
+                                <option value="LOW">LOW</option>
+                                <option value="MEDIUM">MEDIUM</option>
+                                <option value="HIGH">HIGH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Hours Required</label>
+                            <input type="number" id="incidentHours" step="0.5" required placeholder="Enter hours">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Dispatchers Needed</label>
+                            <input type="number" id="incidentDispatchers" min="0" required value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Dispatch Room</label>
+                            <input type="number" id="incidentRoom" required placeholder="Enter room number">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Medics Needed</label>
+                            <input type="number" id="incidentMedics" min="0" required value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Drones Needed</label>
+                            <input type="number" id="incidentDrones" min="0" required value="0">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="button" class="btn btn-secondary" onclick="hideAddIncidentForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Incidents List -->
+                <div id="incidentsList" class="incidents-grid">
+                    <p class="empty-message">No incidents yet. Create one to get started.</p>
+                </div>
+            </section>
+
+            <!-- System Configuration Tab -->
+            <section id="system-config" class="tab-content">
+                <div class="section-header">
+                    <h2>System Configuration</h2>
+                    <p>Configure system parameters</p>
+                </div>
+
+                <div class="card">
+                    <h3>System Parameters</h3>
+                    <form onsubmit="updateSystemConfig(event)" class="system-config-form">
+                        <div class="config-grid">
+                            <div class="form-group">
+                                <label>Dispatcher Max Working Hours</label>
+                                <input type="number" id="configDispatcherMaxWork" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Medic Max Working Hours</label>
+                                <input type="number" id="configMedicMaxWork" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Minimum Dispatcher Salary (₪)</label>
+                                <input type="number" id="configMinSalaryDispatcher" step="100" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Minimum Medic Salary (₪)</label>
+                                <input type="number" id="configMinSalaryMedic" step="100" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Drone Work Hours Without Charge</label>
+                                <input type="number" id="configDroneWorkNoCharge" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">Save Configuration</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- New Week Button -->
+                <div class="card">
+                    <h3>Weekly Reset</h3>
+                    <p>Reset all responders for a new week</p>
+                    <button class="btn btn-warning" onclick="startNewWeek()">Start New Week</button>
+                </div>
+
+                <div class="card">
+                    <h3>Reset Loaded Data</h3>
+                    <p>Reload the original sample dataset from JSON and clear saved browser state.</p>
+                    <button class="btn btn-danger" onclick="resetToSampleData()">Reset to Sample Data</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal for Responder Details -->
+    <div id="responderModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeResponderModal()">&times;</span>
+            <div id="responderModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Incident Details -->
+    <div id="incidentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeIncidentModal()">&times;</span>
+            <div id="incidentModalContent"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
